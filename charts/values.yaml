@@ -85,3 +85,6 @@ tolerations: []
 affinity: {}
 
 probePath: "/"
+
+databaseUri: ""
+castServiceUrl: ""
