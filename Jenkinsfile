@@ -51,5 +51,18 @@ pipeline {
                 '''
             }
         }
+        
+        stage('Deploy movie-service dev') {
+            environment { KUBECONFIG = credentials("config") }
+            steps {
+                sh '''
+                    rm -Rf .kube && mkdir .kube
+                    cat $KUBECONFIG > .kube/config
+                    helm upgrade --install movie-service charts --namespace dev \
+                    --set image.tag=${DOCKER_TAG} \
+                    --set service.nodePort=30001
+                '''
+            }
+        }
     }
 }
