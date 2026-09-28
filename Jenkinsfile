@@ -153,5 +153,50 @@ pipeline {
                 '''
             }
         }
+
+        stage('Approve prod deployment') {
+            when { branch 'master' }
+            steps {
+                timeout(time: 15, unit: "MINUTES") {
+                    input message: 'Déployer en production ?', ok: 'Yes'
+                }
+            }
+        }
+
+        stage('Deploy movie-service prod') {
+            when { branch 'master' }
+            environment { KUBECONFIG = credentials("config") }
+            steps {
+                sh '''
+                    rm -Rf .kube && mkdir .kube
+                    cat $KUBECONFIG > .kube/config
+                    helm upgrade --install movie-service charts --namespace prod \
+                    --set image.tag=${DOCKER_TAG} \
+                    --set service.nodePort=30027
+                '''
+            }
+        }
+
+        stage('Deploy cast-service prod') {
+            when { branch 'master' }
+            environment { KUBECONFIG = credentials("config") }
+            steps {
+                sh '''
+                    rm -Rf .kube && mkdir .kube
+                    cat $KUBECONFIG > .kube/config
+                    helm upgrade --install cast-service charts --namespace prod \
+                    --set image.repository=charlesht/cast-service \
+                    --set image.tag=${DOCKER_TAG} \
+                    --set probePath=/api/v1/casts/docs \
+                    --set databaseUri="postgresql://cast_db_username:cast_db_password@cast-db/cast_db_dev" \
+                    --set castServiceUrl="" \
+                    --set dbHost=cast-db \
+                    --set postgresUser=cast_db_username \
+                    --set postgresPassword=cast_db_password \
+                    --set postgresDb=cast_db_dev \
+                    --set service.nodePort=30028
+                '''
+            }
+        }
     }
 }
