@@ -14,7 +14,7 @@ pipeline {
             }
         }
 
-        stage('Test local via Docker compose') {
+        stage('Test local via Docker Compose') {
             steps {
                 sh '''
                 docker compose up -d --build
