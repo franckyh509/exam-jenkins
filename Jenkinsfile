@@ -13,7 +13,20 @@ pipeline {
                 '''
             }
         }
-    
+
+        stage('Test local via Docker compose') {
+            steps {
+                sh '''
+                docker compose up -d --build
+                sleep 10
+                docker compose ps
+                curl -is http://localhost:8080/api/v1/movies/
+                curl -is http://localhost:8080/api/v1/casts/docs
+                docker compose down
+                '''
+            }
+        }
+
         stage('Tag') {
             steps {
                 sh '''
