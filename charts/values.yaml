@@ -84,11 +84,11 @@ tolerations: []
 
 affinity: {}
 
-probePath: "/api/v1/casts/docs"
-castServiceUrl: ""
+probePath: "/api/v1/movies/"
+castServiceUrl: "http://cast-service:80/api/v1/casts/"
 
-databaseUri: "postgresql://cast_db_username:cast_db_password@cast-db/cast_db_dev"
-dbHost: "cast-db"
-postgresUser: "cast_db_username"
-postgresPassword: "cast_db_password"
-postgresDb: "cast_db_dev"
+databaseUri: "postgresql://movie_db_username:movie_db_password@movie-db/movie_db_dev"
+dbHost: "movie-db"
+postgresUser: "movie_db_username"
+postgresPassword: "movie_db_password"
+postgresDb: "movie_db_dev"
