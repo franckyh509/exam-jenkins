@@ -60,7 +60,7 @@ pipeline {
                     cat $KUBECONFIG > .kube/config
                     helm upgrade --install movie-service charts --namespace dev \
                     --set image.tag=${DOCKER_TAG} \
-                    --set service.nodePort=30011
+                    --set service.nodePort=30021
                 '''
             }
         }
