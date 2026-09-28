@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.dbHost }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.dbHost }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.dbHost }}
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12.1-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresUser | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgresPassword | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresDb | quote }}
