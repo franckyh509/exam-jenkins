@@ -85,5 +85,73 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy movie-service qa') {
+            environment { KUBECONFIG = credentials("config") }
+            steps {
+                sh '''
+                    rm -Rf .kube && mkdir .kube
+                    cat $KUBECONFIG > .kube/config
+                    helm upgrade --install movie-service charts --namespace qa \
+                    --set image.tag=${DOCKER_TAG} \
+                    --set service.nodePort=30023
+                '''
+            }
+        }
+
+        stage('Deploy cast-service qa') {
+            environment { KUBECONFIG = credentials("config") }
+            steps {
+                sh '''
+                    rm -Rf .kube && mkdir .kube
+                    cat $KUBECONFIG > .kube/config
+                    helm upgrade --install cast-service charts --namespace qa \
+                    --set image.repository=charlesht/cast-service \
+                    --set image.tag=${DOCKER_TAG} \
+                    --set probePath=/api/v1/casts/docs \
+                    --set databaseUri="postgresql://cast_db_username:cast_db_password@cast-db/cast_db_dev" \
+                    --set castServiceUrl="" \
+                    --set dbHost=cast-db \
+                    --set postgresUser=cast_db_username \
+                    --set postgresPassword=cast_db_password \
+                    --set postgresDb=cast_db_dev \
+                    --set service.nodePort=30024
+                '''
+            }
+        }
+
+        stage('Deploy movie-service staging') {
+            environment { KUBECONFIG = credentials("config") }
+            steps {
+                sh '''
+                    rm -Rf .kube && mkdir .kube
+                    cat $KUBECONFIG > .kube/config
+                    helm upgrade --install movie-service charts --namespace staging \
+                    --set image.tag=${DOCKER_TAG} \
+                    --set service.nodePort=30025
+                '''
+            }
+        }
+
+        stage('Deploy cast-service staging') {
+            environment { KUBECONFIG = credentials("config") }
+            steps {
+                sh '''
+                    rm -Rf .kube && mkdir .kube
+                    cat $KUBECONFIG > .kube/config
+                    helm upgrade --install cast-service charts --namespace staging \
+                    --set image.repository=charlesht/cast-service \
+                    --set image.tag=${DOCKER_TAG} \
+                    --set probePath=/api/v1/casts/docs \
+                    --set databaseUri="postgresql://cast_db_username:cast_db_password@cast-db/cast_db_dev" \
+                    --set castServiceUrl="" \
+                    --set dbHost=cast-db \
+                    --set postgresUser=cast_db_username \
+                    --set postgresPassword=cast_db_password \
+                    --set postgresDb=cast_db_dev \
+                    --set service.nodePort=30026
+                '''
+            }
+        }
     }
 }
