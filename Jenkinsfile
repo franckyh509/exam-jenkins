@@ -177,7 +177,7 @@ pipeline {
             }
         }
 
-        stage('Deploy cast-service prod') {
+        stage('Deploy cast-service  prod') {
             when { branch 'master' }
             environment { KUBECONFIG = credentials("config") }
             steps {
